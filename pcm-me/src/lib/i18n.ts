@@ -65,6 +65,7 @@ export const ui: Dict = {
   typeCompany: { ar: 'شركة', en: 'Company' },
   emptyQuery: { ar: 'أدخل كلمة للبحث.', en: 'Enter a term to search.' },
   resultsCount: { ar: 'نتيجة', en: 'results' },
+  cookieSettings: { ar: 'إعدادات ملفات تعريف الارتباط', en: 'Cookie settings' },
 }
 
 export const t = (locale: Locale, key: keyof typeof ui): string => ui[key][locale]

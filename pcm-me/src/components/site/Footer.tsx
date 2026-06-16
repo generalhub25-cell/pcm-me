@@ -9,6 +9,7 @@ import {
   jobsIndexUrl,
   companiesIndexUrl,
 } from '../../lib/routes'
+import { ReconsentLink } from './ReconsentLink'
 
 /**
  * Site footer (PRD §4.3): about blurb; nav columns (main sections; legal;
@@ -46,6 +47,7 @@ export const Footer: React.FC<{ locale: Locale }> = ({ locale }) => {
               <li><Link href={`/${locale}/privacy-policy`}>{t(locale, 'privacy')}</Link></li>
               <li><Link href={`/${locale}/terms`}>{t(locale, 'terms')}</Link></li>
               <li><Link href={`/${locale}/cookie-policy`}>{t(locale, 'cookies')}</Link></li>
+              <li><ReconsentLink label={t(locale, 'cookieSettings')} /></li>
             </ul>
           </div>
 
