@@ -11,6 +11,11 @@
 - Rich text: Lexical (`@payloadcms/richtext-lexical`).
 - IDs: opaque UUID (`idType: 'uuid'`) per PRD §6.9.
 
+## ROOT_REDIRECT (OQ-2)
+
+Bare `/` redirects to **`/ar/`** (default audience language), implemented in
+`src/middleware.ts`. Session 06 sets `hreflang x-default` to match.
+
 ## OQ defaults adopted (Session 01)
 
 - **OQ-3 (translation model):** separate entity per locale, linked by a
