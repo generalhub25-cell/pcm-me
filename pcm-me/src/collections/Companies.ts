@@ -6,6 +6,7 @@ import { seoFields } from '../fields/seo'
 import { translationLinkField } from '../fields/translationLink'
 import { isAdminOrEditor } from '../access/roles'
 import { enforceAltTextOnPublish } from '../hooks/publish'
+import { revalidateContentAfterChange, revalidateContentAfterDelete } from '../hooks/revalidate'
 
 /**
  * Company (PRD §6.2): name, logo -> Image.id (nullable), body rich text,
@@ -26,6 +27,8 @@ export const Companies: CollectionConfig = {
   },
   hooks: {
     beforeChange: [enforceAltTextOnPublish(['logo', 'ogImage'])],
+    afterChange: [revalidateContentAfterChange],
+    afterDelete: [revalidateContentAfterDelete],
   },
   indexes: slugLocaleUniqueIndex,
   fields: [

@@ -26,6 +26,44 @@ Elasticsearch without touching callers. Only `published` Article/Vacancy/
 Company are searched; Application/contact/admin data is never indexed.
 Default results page size: 12 (OQ-18).
 
+## Performance, security & deployment (Session 08)
+
+- **HOSTING_TARGET (OQ-1/OQ-19):** not finalized. The app is a standard
+  Next.js 16 + Payload deployable to any Node host or Vercel/Netlify. Recorded
+  default: a Node host that meets §11 (HTTPS, auto-renewing certs, CDN).
+  Provision **production on `pcm.me`** and a **staging/preview** environment
+  (staging is where Session 07 migration is validated before cutover).
+- **CDN_PROVIDER (OQ-19):** not finalized. Default: the host's edge/CDN
+  (Vercel Edge / Netlify / Cloudflare). Caching rules MUST respect the
+  Session 07 redirect map (cache the 301, not a stale 200) and never cache
+  admin/application responses (enforced via `Cache-Control: no-store` headers
+  in `next.config.mjs`).
+- **Security (highest priority, remediates report §6.4/§8):** security headers
+  (CSP, HSTS, X-Content-Type-Options nosniff, Referrer-Policy, X-Frame-Options)
+  are set in `next.config.mjs#headers`; `poweredByHeader` is off. Production
+  Next never serves `display_errors`/stack traces; API/form handlers return
+  generic error codes (Session 04) and the public error boundary
+  (`error.tsx`) leaks nothing. Admin (`/admin`), Payload API (`/api`) and the
+  form endpoints (`/submit`) are access-controlled (Sessions 02/04) and
+  `no-store` + `noindex` at the server.
+- **HTTPS:** enforce HTTP→HTTPS at the host (Let's Encrypt auto-renew per
+  report §6.1). HSTS is emitted so browsers upgrade.
+- **Images:** `OptimizedImage` (next/image) emits responsive `srcset` in
+  AVIF/WebP with fallback, lazy-loads below-the-fold, and uses stored
+  width/height for CLS. `next.config` `images.formats = [avif, webp]`.
+- **Cache invalidation on publish:** content `afterChange`/`afterDelete`
+  hooks revalidate the public route tree and `/sitemap.xml`.
+- **Performance budget (PRD §10.2, OQ-17 default):** Lighthouse CI
+  (`lighthouserc.json`) asserts LCP ≤ 2.5 s and CLS < 0.1 (and TBT as the INP
+  proxy) on Home, an article, and a jobs page in both locales. Run
+  `npx @lhci/cli autorun` against a production build in CI.
+- **Backups & logging (PRD §11.6):** back up the database (the SQLite file /
+  Postgres dump) and the `media`/uploads directory on a schedule; ship
+  Payload's pino logs (and access logs) to centralized logging. These are
+  host/ops configuration, documented here for the deploy runbook.
+- **OQ-16 brand tokens:** still placeholders in `src/styles/tokens.css`;
+  swap real values when provided.
+
 ## Migration & redirects (Session 07)
 
 - **OQ-21 (BLOCKER for the corpus import only):** no legacy WordPress access /

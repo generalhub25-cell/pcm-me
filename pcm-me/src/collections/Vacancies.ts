@@ -6,6 +6,7 @@ import { seoFields } from '../fields/seo'
 import { translationLinkField } from '../fields/translationLink'
 import { isAdminOrEditor } from '../access/roles'
 import { enforceAltTextOnPublish } from '../hooks/publish'
+import { revalidateContentAfterChange, revalidateContentAfterDelete } from '../hooks/revalidate'
 import { COUNTRIES, ROLE_TYPES, toOptions } from '../lib/enums'
 
 /**
@@ -26,6 +27,8 @@ export const Vacancies: CollectionConfig = {
   },
   hooks: {
     beforeChange: [enforceAltTextOnPublish(['ogImage'])],
+    afterChange: [revalidateContentAfterChange],
+    afterDelete: [revalidateContentAfterDelete],
   },
   indexes: slugLocaleUniqueIndex,
   fields: [

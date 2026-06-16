@@ -9,6 +9,7 @@ import { Breadcrumbs } from '../../../../../components/site/Breadcrumbs'
 import { Body } from '../../../../../components/site/Body'
 import { SetLangAlternate } from '../../../../../components/site/LangAlternate'
 import { imageProps } from '../../../../../components/site/media'
+import { OptimizedImage } from '../../../../../components/site/OptimizedImage'
 import { companyMetadata } from '../../../../../lib/seoPages'
 
 export async function generateMetadata({
@@ -59,8 +60,7 @@ export default async function CompanyProfilePage({
       <div data-jsonld-slot="Organization" hidden />
 
       {logo && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={logo.src} alt={logo.alt} width={logo.width} height={logo.height} style={{ maxHeight: 80, width: 'auto' }} />
+        <OptimizedImage src={logo.src} alt={logo.alt} width={logo.width} height={logo.height} priority style={{ maxHeight: 80, width: 'auto' }} />
       )}
       <h1 className="page-title">{doc.name}</h1>
       <div className="card__meta">

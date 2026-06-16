@@ -5,6 +5,7 @@ import type { Locale } from '../../lib/enums'
 import { countryLabel, roleTypeLabel } from '../../lib/i18n'
 import { articleDetailUrl, companyUrl, vacancyUrl } from '../../lib/routes'
 import { imageProps } from './media'
+import { OptimizedImage } from './OptimizedImage'
 
 // Defensive date formatting — missing/invalid dates render empty (PRD §6.4 fix).
 const fmtDate = (value: unknown, locale: Locale): string => {
@@ -40,8 +41,7 @@ export const ArticleCard: React.FC<{ doc: ArticleDoc; locale: Locale }> = ({ doc
   return (
     <article className="card">
       {img && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={img.src} alt={img.alt} width={img.width} height={img.height} style={{ maxWidth: '100%', height: 'auto', borderRadius: 6 }} />
+        <OptimizedImage src={img.src} alt={img.alt} width={img.width} height={img.height} style={{ borderRadius: 6 }} />
       )}
       <h3>
         <Link href={articleDetailUrl(locale, doc.kind, doc.slug || '')}>{doc.title}</Link>
@@ -92,8 +92,7 @@ export const CompanyCard: React.FC<{ doc: CompanyDoc; locale: Locale }> = ({ doc
   return (
     <article className="card">
       {img && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={img.src} alt={img.alt} width={img.width} height={img.height} style={{ maxHeight: 60, width: 'auto' }} />
+        <OptimizedImage src={img.src} alt={img.alt} width={img.width} height={img.height} style={{ maxHeight: 60, width: 'auto' }} />
       )}
       <h3>
         <Link href={companyUrl(locale, doc.slug || '')}>{doc.name}</Link>

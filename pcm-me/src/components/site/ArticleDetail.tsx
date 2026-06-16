@@ -12,6 +12,7 @@ import { ShareLinks } from './ShareLinks'
 import { ArticleCard } from './Cards'
 import { SetLangAlternate } from './LangAlternate'
 import { imageProps } from './media'
+import { OptimizedImage } from './OptimizedImage'
 import { JsonLd } from '../seo/JsonLd'
 import { articleJsonLd } from '../../lib/jsonld'
 import { canonicalArticle, absoluteUrl } from '../../lib/canonical'
@@ -108,13 +109,14 @@ export const ArticleDetail: React.FC<{
       </div>
 
       {hero && (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <OptimizedImage
           src={hero.src}
           alt={hero.alt}
           width={hero.width}
           height={hero.height}
-          style={{ maxWidth: '100%', height: 'auto', borderRadius: 8, marginBlock: '1rem' }}
+          priority
+          sizes="(max-width: 768px) 100vw, 800px"
+          style={{ borderRadius: 8, marginBlock: '1rem' }}
         />
       )}
 

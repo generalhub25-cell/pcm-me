@@ -6,6 +6,7 @@ import { seoFields } from '../fields/seo'
 import { translationLinkField } from '../fields/translationLink'
 import { isAdminOrEditor } from '../access/roles'
 import { enforceAltTextOnPublish } from '../hooks/publish'
+import { revalidateContentAfterChange, revalidateContentAfterDelete } from '../hooks/revalidate'
 
 /**
  * Category (PRD §6.5): name, slug, parent -> Category.id (nullable, enables
@@ -26,6 +27,8 @@ export const Categories: CollectionConfig = {
   },
   hooks: {
     beforeChange: [enforceAltTextOnPublish(['ogImage'])],
+    afterChange: [revalidateContentAfterChange],
+    afterDelete: [revalidateContentAfterDelete],
   },
   indexes: slugLocaleUniqueIndex,
   fields: [

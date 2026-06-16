@@ -6,6 +6,7 @@ import { seoFields } from '../fields/seo'
 import { translationLinkField } from '../fields/translationLink'
 import { isAdminOrEditor } from '../access/roles'
 import { setPublishedAt, enforceAltTextOnPublish } from '../hooks/publish'
+import { revalidateContentAfterChange, revalidateContentAfterDelete } from '../hooks/revalidate'
 import { ARTICLE_KINDS, toOptions } from '../lib/enums'
 
 /**
@@ -26,6 +27,8 @@ export const Articles: CollectionConfig = {
   },
   hooks: {
     beforeChange: [setPublishedAt, enforceAltTextOnPublish(['heroImage', 'ogImage'])],
+    afterChange: [revalidateContentAfterChange],
+    afterDelete: [revalidateContentAfterDelete],
   },
   indexes: slugLocaleUniqueIndex,
   fields: [

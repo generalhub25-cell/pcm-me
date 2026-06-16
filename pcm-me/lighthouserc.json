@@ -1,0 +1,26 @@
+{
+  "//": "Performance budget validation (PRD §10.2, OQ-17 default): Lighthouse CI on the three reference pages in both locales. Run with `lhci autorun` against a running production build. Replace <article-slug> with a real published article slug.",
+  "ci": {
+    "collect": {
+      "numberOfRuns": 3,
+      "url": [
+        "http://localhost:3000/ar",
+        "http://localhost:3000/en",
+        "http://localhost:3000/ar/articles/<article-slug>",
+        "http://localhost:3000/en/articles/<article-slug>",
+        "http://localhost:3000/ar/jobs",
+        "http://localhost:3000/en/jobs"
+      ],
+      "settings": { "preset": "perf", "emulatedFormFactor": "mobile", "throttlingMethod": "simulate" }
+    },
+    "assert": {
+      "assertions": {
+        "largest-contentful-paint": ["error", { "maxNumericValue": 2500 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "interactive": ["warn", { "maxNumericValue": 3500 }],
+        "total-blocking-time": ["warn", { "maxNumericValue": 200 }]
+      }
+    },
+    "upload": { "target": "temporary-public-storage" }
+  }
+}
