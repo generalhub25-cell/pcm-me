@@ -25,6 +25,10 @@ export const JobsList: React.FC<{
   if (country) conditions.push({ country: { equals: country } })
   if (filters.roleType) conditions.push({ roleType: { equals: filters.roleType } })
   if (filters.employer) conditions.push({ employer: { like: filters.employer } })
+  // Keyword filter (PRD §5.4 / Session 05) — composes with the filters above.
+  if (filters.q && filters.q.trim()) {
+    conditions.push({ or: [{ title: { like: filters.q } }, { employer: { like: filters.q } }] })
+  }
 
   const where: Where | undefined = conditions.length ? { and: conditions } : undefined
   const result = await listPublished('vacancies', locale, {

@@ -16,6 +16,16 @@
 Bare `/` redirects to **`/ar/`** (default audience language), implemented in
 `src/middleware.ts`. Session 06 sets `hreflang x-default` to match.
 
+## SEARCH_BACKEND (OQ-8)
+
+**Database-native (SQLite) contains-based matching via Payload's `like`
+operator** — no extra dependency. All search goes through the single
+`search(query, { locale, types, includeAllLocales, page })` abstraction in
+`src/lib/search.ts`, so the backend can be swapped for Meilisearch/Algolia/
+Elasticsearch without touching callers. Only `published` Article/Vacancy/
+Company are searched; Application/contact/admin data is never indexed.
+Default results page size: 12 (OQ-18).
+
 ## OQ defaults adopted (Session 01)
 
 - **OQ-3 (translation model):** separate entity per locale, linked by a

@@ -59,6 +59,12 @@ export const ui: Dict = {
   },
   contactLine: { ar: 'تواصل معنا عبر صفحة الاتصال.', en: 'Get in touch via our contact page.' },
   switchLanguage: { ar: 'English', en: 'العربية' },
+  searchAllLocales: { ar: 'البحث في كل اللغات', en: 'Search all languages' },
+  typeArticle: { ar: 'مقال', en: 'Article' },
+  typeVacancy: { ar: 'وظيفة', en: 'Vacancy' },
+  typeCompany: { ar: 'شركة', en: 'Company' },
+  emptyQuery: { ar: 'أدخل كلمة للبحث.', en: 'Enter a term to search.' },
+  resultsCount: { ar: 'نتيجة', en: 'results' },
 }
 
 export const t = (locale: Locale, key: keyof typeof ui): string => ui[key][locale]
