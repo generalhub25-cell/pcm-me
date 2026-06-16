@@ -26,6 +26,30 @@ Elasticsearch without touching callers. Only `published` Article/Vacancy/
 Company are searched; Application/contact/admin data is never indexed.
 Default results page size: 12 (OQ-18).
 
+## Migration & redirects (Session 07)
+
+- **OQ-21 (BLOCKER for the corpus import only):** no legacy WordPress access /
+  WXR export / media archive is available in this environment, so the
+  production corpus import is **recorded as blocked and NOT run** — no content
+  is fabricated (per PRD §12.1). Every other session proceeds without it.
+- **Importer tool** (`npm run migrate:import`, set `WXR_PATH` to a WordPress
+  export; point `DATABASE_URI` at staging): maps WP posts→Article (kind
+  inferred), vacancy templates→Vacancy (country mapped), company posts→Company;
+  assigns locale by script detection (Arabic→ar, else en) and flags
+  low-confidence; preserves legacy timestamps; sets `legacy_url`; missing/
+  `Undefined` fields import as null; expired vacancies → `archived` (OQ-20).
+  No machine translation (OQ-3). Field-mapping logic is pure + unit-checkable
+  in `src/migration/mapping.ts`.
+- **Seed 301 redirect map (PRD §3.2)** is live now via `next.config.mjs`
+  `redirects()` from `src/migration/seed-redirects.json`, targeting the
+  Session 06 canonical URLs (`/about`→`/ar/about`, `/vacancies/egypt`→
+  `/ar/jobs/egypt`, `/vacancies/ksa-to-ksa`→`/ar/jobs/ksa` (OQ-4),
+  `/glaxosmithkline`→`/ar/companies/glaxosmithkline`); bare `/`→`/ar` via
+  middleware.
+- **Redirect-map artifact:** `npm run migrate:redirect-map` writes
+  `migration/redirect-map.csv` (seed mappings + one row per migrated
+  `legacy_url`→canonical). **Validation:** `npm run migrate:validate`.
+
 ## OQ defaults adopted (Session 01)
 
 - **OQ-3 (translation model):** separate entity per locale, linked by a

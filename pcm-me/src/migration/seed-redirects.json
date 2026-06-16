@@ -1,0 +1,7 @@
+[
+  { "from": "/about", "to": "/ar/about" },
+  { "from": "/privacy-policy", "to": "/ar/privacy-policy" },
+  { "from": "/vacancies/egypt", "to": "/ar/jobs/egypt" },
+  { "from": "/vacancies/ksa-to-ksa", "to": "/ar/jobs/ksa" },
+  { "from": "/glaxosmithkline", "to": "/ar/companies/glaxosmithkline" }
+]

@@ -17,7 +17,10 @@
     "migrate:create": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:create",
     "migrate:down": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:down",
     "migrate:fresh": "cross-env NODE_OPTIONS=--no-deprecation payload migrate:fresh",
-    "seed": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx src/seed/run.ts"
+    "seed": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx src/seed/run.ts",
+    "migrate:import": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx src/migration/import.ts",
+    "migrate:redirect-map": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx src/migration/buildRedirectMap.ts",
+    "migrate:validate": "cross-env NODE_OPTIONS=--no-deprecation node --env-file=.env --import tsx src/migration/validate.ts"
   },
   "dependencies": {
     "@payloadcms/db-sqlite": "^3.85.1",

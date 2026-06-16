@@ -10,7 +10,8 @@ import { DEFAULT_LOCALE } from './lib/enums'
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone()
   url.pathname = `/${DEFAULT_LOCALE}`
-  return NextResponse.redirect(url)
+  // 301 (permanent) to match the §5 redirect map (https://pcm.me/ → ROOT_REDIRECT).
+  return NextResponse.redirect(url, 301)
 }
 
 export const config = {
