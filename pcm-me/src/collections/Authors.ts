@@ -1,6 +1,9 @@
 import type { CollectionConfig } from 'payload'
 
 import { sharedFields, slugLocaleUniqueIndex } from '../fields/shared'
+import { translationLinkField } from '../fields/translationLink'
+import { isAdminOrEditor } from '../access/roles'
+import { enforceAltTextOnPublish } from '../hooks/publish'
 
 /**
  * Author (PRD §6.8): id, name, bio (nullable), avatar -> Image.id (nullable),
@@ -10,6 +13,16 @@ export const Authors: CollectionConfig = {
   slug: 'authors',
   admin: {
     useAsTitle: 'name',
+    defaultColumns: ['name', 'locale', 'status'],
+  },
+  access: {
+    read: isAdminOrEditor,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdminOrEditor,
+  },
+  hooks: {
+    beforeChange: [enforceAltTextOnPublish(['avatar'])],
   },
   indexes: slugLocaleUniqueIndex,
   fields: [
@@ -30,5 +43,6 @@ export const Authors: CollectionConfig = {
       required: false,
     },
     ...sharedFields(),
+    translationLinkField(),
   ],
 }

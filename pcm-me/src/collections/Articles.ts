@@ -1,15 +1,31 @@
 import type { CollectionConfig } from 'payload'
 
 import { sharedFields, slugLocaleUniqueIndex } from '../fields/shared'
+import { featuringFields } from '../fields/featuring'
+import { seoFields } from '../fields/seo'
+import { translationLinkField } from '../fields/translationLink'
+import { isAdminOrEditor } from '../access/roles'
+import { setPublishedAt, enforceAltTextOnPublish } from '../hooks/publish'
 import { ARTICLE_KINDS, toOptions } from '../lib/enums'
 
 /**
- * Article (PRD §6.1) + shared fields per §6.
+ * Article (PRD §6.1) + shared fields per §6 + Session 02 admin affordances
+ * (featuring, SEO metadata, translation linking, publish/alt-text rules).
  */
 export const Articles: CollectionConfig = {
   slug: 'articles',
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'kind', 'locale', 'status'],
+  },
+  access: {
+    read: isAdminOrEditor,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdminOrEditor,
+  },
+  hooks: {
+    beforeChange: [setPublishedAt, enforceAltTextOnPublish(['heroImage', 'ogImage'])],
   },
   indexes: slugLocaleUniqueIndex,
   fields: [
@@ -66,7 +82,8 @@ export const Articles: CollectionConfig = {
       type: 'date',
       required: false,
       admin: {
-        description: 'Nullable until published.',
+        position: 'sidebar',
+        description: 'Nullable until published; defaults to now on publish.',
       },
     },
     {
@@ -77,6 +94,9 @@ export const Articles: CollectionConfig = {
         description: 'Derived, optional.',
       },
     },
+    ...seoFields(),
     ...sharedFields(),
+    ...featuringFields(),
+    translationLinkField(),
   ],
 }

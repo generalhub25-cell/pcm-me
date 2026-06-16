@@ -165,13 +165,25 @@ export interface Article {
   category?: (string | null) | Category;
   tags?: (string | Tag)[] | null;
   /**
-   * Nullable until published.
+   * Nullable until published; defaults to now on publish.
    */
   publishedAt?: string | null;
   /**
    * Derived, optional.
    */
   readingTimeMinutes?: number | null;
+  /**
+   * Falls back to title (rendered in Session 06).
+   */
+  metaTitle?: string | null;
+  /**
+   * Falls back to excerpt (rendered in Session 06).
+   */
+  metaDescription?: string | null;
+  /**
+   * Falls back to hero image, then site default (Session 06).
+   */
+  ogImage?: (string | null) | Image;
   /**
    * Content locale (PRD §4.1). ar = RTL default, en = LTR.
    */
@@ -192,6 +204,14 @@ export interface Article {
    * Exact old absolute URL; populated by Session 07; used to build the 301 map.
    */
   legacyUrl?: string | null;
+  /**
+   * Feature this item on the Home page (this locale only).
+   */
+  featured?: boolean | null;
+  /**
+   * Order within the featured set (lower shows first).
+   */
+  featuredOrder?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -202,11 +222,11 @@ export interface Article {
 export interface Image {
   id: string;
   /**
-   * Arabic alt text. Required to publish an ar item using this image (Session 02).
+   * Arabic alt text. Required to publish an ar item using this image (PRD §8.4).
    */
   altTextAr?: string | null;
   /**
-   * English alt text. Required to publish an en item using this image (Session 02).
+   * English alt text. Required to publish an en item using this image (PRD §8.4).
    */
   altTextEn?: string | null;
   caption?: string | null;
@@ -266,6 +286,18 @@ export interface Category {
    */
   parent?: (string | null) | Category;
   /**
+   * Falls back to title (rendered in Session 06).
+   */
+  metaTitle?: string | null;
+  /**
+   * Falls back to excerpt (rendered in Session 06).
+   */
+  metaDescription?: string | null;
+  /**
+   * Falls back to hero image, then site default (Session 06).
+   */
+  ogImage?: (string | null) | Image;
+  /**
    * Content locale (PRD §4.1). ar = RTL default, en = LTR.
    */
   locale: 'ar' | 'en';
@@ -285,6 +317,14 @@ export interface Category {
    * Exact old absolute URL; populated by Session 07; used to build the 301 map.
    */
   legacyUrl?: string | null;
+  /**
+   * Feature this item on the Home page (this locale only).
+   */
+  featured?: boolean | null;
+  /**
+   * Order within the featured set (lower shows first).
+   */
+  featuredOrder?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -345,6 +385,18 @@ export interface Company {
   founded?: string | null;
   headquarters?: string | null;
   /**
+   * Falls back to title (rendered in Session 06).
+   */
+  metaTitle?: string | null;
+  /**
+   * Falls back to excerpt (rendered in Session 06).
+   */
+  metaDescription?: string | null;
+  /**
+   * Falls back to hero image, then site default (Session 06).
+   */
+  ogImage?: (string | null) | Image;
+  /**
    * Content locale (PRD §4.1). ar = RTL default, en = LTR.
    */
   locale: 'ar' | 'en';
@@ -364,6 +416,14 @@ export interface Company {
    * Exact old absolute URL; populated by Session 07; used to build the 301 map.
    */
   legacyUrl?: string | null;
+  /**
+   * Feature this item on the Home page (this locale only).
+   */
+  featured?: boolean | null;
+  /**
+   * Order within the featured set (lower shows first).
+   */
+  featuredOrder?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -420,6 +480,18 @@ export interface Vacancy {
    */
   isActive?: boolean | null;
   /**
+   * Falls back to title (rendered in Session 06).
+   */
+  metaTitle?: string | null;
+  /**
+   * Falls back to excerpt (rendered in Session 06).
+   */
+  metaDescription?: string | null;
+  /**
+   * Falls back to hero image, then site default (Session 06).
+   */
+  ogImage?: (string | null) | Image;
+  /**
    * Content locale (PRD §4.1). ar = RTL default, en = LTR.
    */
   locale: 'ar' | 'en';
@@ -439,6 +511,14 @@ export interface Vacancy {
    * Exact old absolute URL; populated by Session 07; used to build the 301 map.
    */
   legacyUrl?: string | null;
+  /**
+   * Feature this item on the Home page (this locale only).
+   */
+  featured?: boolean | null;
+  /**
+   * Order within the featured set (lower shows first).
+   */
+  featuredOrder?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -482,6 +562,7 @@ export interface File {
  */
 export interface User {
   id: string;
+  roles: ('admin' | 'editor')[];
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -622,11 +703,16 @@ export interface ArticlesSelect<T extends boolean = true> {
   tags?: T;
   publishedAt?: T;
   readingTimeMinutes?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
   locale?: T;
   translationGroupId?: T;
   slug?: T;
   status?: T;
   legacyUrl?: T;
+  featured?: T;
+  featuredOrder?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -641,11 +727,16 @@ export interface CompaniesSelect<T extends boolean = true> {
   externalUrl?: T;
   founded?: T;
   headquarters?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
   locale?: T;
   translationGroupId?: T;
   slug?: T;
   status?: T;
   legacyUrl?: T;
+  featured?: T;
+  featuredOrder?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -666,11 +757,16 @@ export interface VacanciesSelect<T extends boolean = true> {
   postedAt?: T;
   expiresAt?: T;
   isActive?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
   locale?: T;
   translationGroupId?: T;
   slug?: T;
   status?: T;
   legacyUrl?: T;
+  featured?: T;
+  featuredOrder?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -696,11 +792,16 @@ export interface ApplicationsSelect<T extends boolean = true> {
 export interface CategoriesSelect<T extends boolean = true> {
   name?: T;
   parent?: T;
+  metaTitle?: T;
+  metaDescription?: T;
+  ogImage?: T;
   locale?: T;
   translationGroupId?: T;
   slug?: T;
   status?: T;
   legacyUrl?: T;
+  featured?: T;
+  featuredOrder?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -776,6 +877,7 @@ export interface FilesSelect<T extends boolean = true> {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  roles?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

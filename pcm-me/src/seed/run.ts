@@ -25,15 +25,27 @@ const run = async () => {
   // --- Admin user (create path / admin scaffold) ---
   const adminEmail = process.env.SEED_ADMIN_EMAIL || 'admin@pcm.me'
   const adminPassword = process.env.SEED_ADMIN_PASSWORD || 'admin1234'
-  const existingUsers = await payload.count({ collection: 'users' })
+  const existingUsers = await payload.find({ collection: 'users', limit: 1 })
   if (existingUsers.totalDocs === 0) {
     await payload.create({
       collection: 'users',
-      data: { email: adminEmail, password: adminPassword },
+      data: { email: adminEmail, password: adminPassword, roles: ['admin'] },
     })
     payload.logger.info(`Created admin user: ${adminEmail} / ${adminPassword}`)
   } else {
-    payload.logger.info('Admin user already exists — skipping.')
+    // Backfill the admin role on a pre-existing user (e.g. created before the
+    // roles field existed) so it is not locked out by access control.
+    const u = existingUsers.docs[0] as { id: string; roles?: string[] }
+    if (!u.roles || !u.roles.includes('admin')) {
+      await payload.update({
+        collection: 'users',
+        id: u.id,
+        data: { roles: ['admin'] },
+      })
+      payload.logger.info('Backfilled admin role on existing user.')
+    } else {
+      payload.logger.info('Admin user already exists — skipping.')
+    }
   }
 
   // --- Category taxonomy (Section 5), both locales ---

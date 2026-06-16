@@ -1,22 +1,30 @@
 import type { CollectionConfig } from 'payload'
 
+import { isAdminOrEditor } from '../access/roles'
+import { applicationsCsvEndpoint } from '../endpoints/applicationsCsv'
 import { LOCALES, toOptions } from '../lib/enums'
 
 /**
- * Application (PRD §6.3 — new entity; capture/forward/retention logic is
- * Session 04, OQ-5). §3.4 enumerates an explicit field set that overrides
- * the shared-fields rule: id, vacancy_id, applicant_name, applicant_email,
- * applicant_phone, cv_file -> File.id, created_at, consent_given,
- * source_locale.
- *
- * Session 01 only creates the table/collection. The submission endpoint is
- * NOT built here (Session 04).
+ * Application (PRD §6.3). §3.4 explicit field set. Session 02 adds the admin
+ * review list + CSV export (PRD §7.5). Public capture endpoint is Session 04
+ * (which writes with overrideAccess); here access is restricted to staff.
  */
 export const Applications: CollectionConfig = {
   slug: 'applications',
   admin: {
     useAsTitle: 'applicantName',
+    defaultColumns: ['applicantName', 'applicantEmail', 'vacancy', 'createdAt', 'sourceLocale'],
+    components: {
+      beforeListTable: ['/components/ExportApplicationsButton#ExportApplicationsButton'],
+    },
   },
+  access: {
+    read: isAdminOrEditor,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdminOrEditor,
+  },
+  endpoints: [applicationsCsvEndpoint],
   fields: [
     {
       name: 'vacancy',

@@ -1,16 +1,31 @@
 import type { CollectionConfig } from 'payload'
 
 import { sharedFields, slugLocaleUniqueIndex } from '../fields/shared'
+import { featuringFields } from '../fields/featuring'
+import { seoFields } from '../fields/seo'
+import { translationLinkField } from '../fields/translationLink'
+import { isAdminOrEditor } from '../access/roles'
+import { enforceAltTextOnPublish } from '../hooks/publish'
 import { COUNTRIES, ROLE_TYPES, toOptions } from '../lib/enums'
 
 /**
- * Vacancy (PRD §6.3) + shared fields per §6.
+ * Vacancy (PRD §6.3) + shared fields per §6 + Session 02 admin affordances.
  * `is_active` is derived: true when expires_at is null or in the future.
  */
 export const Vacancies: CollectionConfig = {
   slug: 'vacancies',
   admin: {
     useAsTitle: 'title',
+    defaultColumns: ['title', 'country', 'roleType', 'locale', 'status'],
+  },
+  access: {
+    read: isAdminOrEditor,
+    create: isAdminOrEditor,
+    update: isAdminOrEditor,
+    delete: isAdminOrEditor,
+  },
+  hooks: {
+    beforeChange: [enforceAltTextOnPublish(['ogImage'])],
   },
   indexes: slugLocaleUniqueIndex,
   fields: [
@@ -93,6 +108,9 @@ export const Vacancies: CollectionConfig = {
         ],
       },
     },
+    ...seoFields(),
     ...sharedFields(),
+    ...featuringFields(),
+    translationLinkField(),
   ],
 }
