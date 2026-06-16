@@ -14,6 +14,7 @@ import { findBySlug, findSibling } from '../../../../../../lib/content'
 import { Breadcrumbs } from '../../../../../../components/site/Breadcrumbs'
 import { Body } from '../../../../../../components/site/Body'
 import { SetLangAlternate } from '../../../../../../components/site/LangAlternate'
+import { ApplicationForm } from '../../../../../../components/forms/ApplicationForm'
 
 const fmtDate = (value: unknown, locale: Locale): string => {
   if (!value) return ''
@@ -114,10 +115,10 @@ export default async function VacancyDetailPage({
         </section>
       ) : null}
 
-      {/* Apply slot — Session 04 inserts the on-site application form here. */}
+      {/* Apply slot — on-site application form (Session 04). */}
       <section className="apply-slot" data-apply-slot>
         <strong>{t(l, 'applyNow')}</strong>
-        <p className="muted">{/* Session 04 application form mounts here. */}—</p>
+        <ApplicationForm locale={l} vacancyId={String(doc.id)} privacyHref={`/${l}/privacy-policy`} />
 
         {(doc.applyEmail || doc.applyWhatsapp) && (
           <p className="card__meta">
