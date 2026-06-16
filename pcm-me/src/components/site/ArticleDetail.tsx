@@ -12,6 +12,9 @@ import { ShareLinks } from './ShareLinks'
 import { ArticleCard } from './Cards'
 import { SetLangAlternate } from './LangAlternate'
 import { imageProps } from './media'
+import { JsonLd } from '../seo/JsonLd'
+import { articleJsonLd } from '../../lib/jsonld'
+import { canonicalArticle, absoluteUrl } from '../../lib/canonical'
 
 const fmtDate = (value: unknown, locale: Locale): string => {
   if (!value) return ''
@@ -81,8 +84,17 @@ export const ArticleDetail: React.FC<{
         ]}
       />
 
-      {/* JSON-LD slot (Session 06 attaches Article/NewsArticle) */}
-      <div data-jsonld-slot={doc.kind === 'news' ? 'NewsArticle' : 'Article'} hidden />
+      <JsonLd
+        data={articleJsonLd({
+          kind: doc.kind,
+          headline: doc.title || '',
+          description: (doc.excerpt as string) || undefined,
+          url: canonicalArticle(locale, doc.kind, slug),
+          imageUrl: hero ? absoluteUrl(hero.src) : undefined,
+          datePublished: doc.publishedAt,
+          authorName: doc.author?.name,
+        })}
+      />
 
       <h1 className="page-title">{doc.title}</h1>
       <div className="card__meta">

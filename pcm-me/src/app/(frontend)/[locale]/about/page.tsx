@@ -4,6 +4,13 @@ import type { Locale } from '../../../../lib/enums'
 import { t } from '../../../../lib/i18n'
 import { homeUrl } from '../../../../lib/routes'
 import { Breadcrumbs } from '../../../../components/site/Breadcrumbs'
+import { simpleMetadata } from '../../../../lib/seoPages'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const l = locale as Locale
+  return simpleMetadata({ locale: l, title: t(l, 'about'), path: `/${l}/about` })
+}
 
 // About (PRD §5.8) — mission/values (report §2.1).
 const copy = {

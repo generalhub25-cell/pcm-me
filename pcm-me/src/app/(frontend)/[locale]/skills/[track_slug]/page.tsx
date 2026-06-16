@@ -4,6 +4,18 @@ import type { Locale } from '../../../../../lib/enums'
 import { t, skillsTrackLabel } from '../../../../../lib/i18n'
 import { homeUrl, skillsTrackUrl } from '../../../../../lib/routes'
 import { CategoryArchive } from '../../../../../components/site/CategoryArchive'
+import { simpleMetadata } from '../../../../../lib/seoPages'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; track_slug: string }>
+}) {
+  const { locale, track_slug } = await params
+  const l = locale as Locale
+  const title = `${t(l, 'skills')} — ${skillsTrackLabel[track_slug]?.[l] || track_slug}`
+  return simpleMetadata({ locale: l, title, path: skillsTrackUrl(l, track_slug) })
+}
 
 // Skills track archive (PRD §3.1) — skills tracks are a Category subtree.
 export default async function SkillsTrackPage({

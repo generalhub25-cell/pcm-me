@@ -7,6 +7,13 @@ import { listPublished } from '../../../../lib/content'
 import { Breadcrumbs } from '../../../../components/site/Breadcrumbs'
 import { CompanyCard } from '../../../../components/site/Cards'
 import { Pagination } from '../../../../components/site/Pagination'
+import { simpleMetadata } from '../../../../lib/seoPages'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const l = locale as Locale
+  return simpleMetadata({ locale: l, title: t(l, 'companies'), path: companiesIndexUrl(l) })
+}
 
 // Companies index (PRD §5.x).
 export default async function CompaniesPage({

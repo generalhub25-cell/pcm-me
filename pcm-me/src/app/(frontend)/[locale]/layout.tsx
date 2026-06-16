@@ -8,6 +8,13 @@ import type { Locale } from '../../../lib/enums'
 import { Header } from '../../../components/site/Header'
 import { Footer } from '../../../components/site/Footer'
 import { LangAlternateProvider } from '../../../components/site/LangAlternate'
+import { JsonLd } from '../../../components/seo/JsonLd'
+import { organizationJsonLd } from '../../../lib/jsonld'
+import { siteUrl } from '../../../lib/canonical'
+
+export const metadata = {
+  metadataBase: new URL(siteUrl()),
+}
 
 /**
  * Public site root layout (PRD §3, §4.1): locale-prefixed routing; sets
@@ -29,6 +36,7 @@ export default async function LocaleLayout({
   return (
     <html lang={l} dir={dirFor(l)} className={`${fontAr.variable} ${fontEn.variable}`}>
       <body>
+        <JsonLd data={organizationJsonLd()} />
         <LangAlternateProvider>
           <Header locale={l} />
           <main className="container">{children}</main>

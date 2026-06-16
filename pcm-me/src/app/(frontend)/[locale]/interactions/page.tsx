@@ -4,6 +4,13 @@ import type { Locale } from '../../../../lib/enums'
 import { t } from '../../../../lib/i18n'
 import { interactionsUrl, homeUrl } from '../../../../lib/routes'
 import { ArticleIndex } from '../../../../components/site/ArticleIndex'
+import { simpleMetadata } from '../../../../lib/seoPages'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const l = locale as Locale
+  return simpleMetadata({ locale: l, title: t(l, 'interactions'), path: interactionsUrl(l) })
+}
 
 // Interactions / Medicines index — Article kind=reference (PRD §3.1, OQ-7 default).
 export default async function InteractionsPage({

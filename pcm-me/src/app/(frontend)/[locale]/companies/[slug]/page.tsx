@@ -9,6 +9,16 @@ import { Breadcrumbs } from '../../../../../components/site/Breadcrumbs'
 import { Body } from '../../../../../components/site/Body'
 import { SetLangAlternate } from '../../../../../components/site/LangAlternate'
 import { imageProps } from '../../../../../components/site/media'
+import { companyMetadata } from '../../../../../lib/seoPages'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; slug: string }>
+}) {
+  const { locale, slug } = await params
+  return companyMetadata(locale as Locale, slug)
+}
 
 // Company profile (PRD §5.x): logo, body, external_url, founded, headquarters.
 export default async function CompanyProfilePage({

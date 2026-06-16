@@ -6,6 +6,14 @@ import { getFeatured } from '../../../lib/queries'
 import { listPublished } from '../../../lib/content'
 import { t } from '../../../lib/i18n'
 import { ArticleCard, VacancyCard, CompanyCard } from '../../../components/site/Cards'
+import { simpleMetadata } from '../../../lib/seoPages'
+import { homeUrl } from '../../../lib/routes'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const l = locale as Locale
+  return simpleMetadata({ locale: l, title: t(l, 'siteName'), path: homeUrl(l), description: t(l, 'aboutBlurb') })
+}
 
 /**
  * Home (PRD §5.1): featured block + latest articles + latest news +

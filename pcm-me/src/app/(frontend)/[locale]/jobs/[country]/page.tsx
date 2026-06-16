@@ -6,6 +6,23 @@ import { t, countryLabel } from '../../../../../lib/i18n'
 import { homeUrl, jobsIndexUrl, jobsCountryUrl, countryFromRouteSlug } from '../../../../../lib/routes'
 import { Breadcrumbs } from '../../../../../components/site/Breadcrumbs'
 import { JobsList } from '../../../../../components/site/JobsList'
+import { simpleMetadata } from '../../../../../lib/seoPages'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; country: string }>
+}) {
+  const { locale, country } = await params
+  const l = locale as Locale
+  const enumCountry = countryFromRouteSlug(country)
+  if (!enumCountry) return { title: 'PCM' }
+  return simpleMetadata({
+    locale: l,
+    title: `${t(l, 'jobs')} — ${countryLabel[enumCountry][l]}`,
+    path: jobsCountryUrl(l, enumCountry),
+  })
+}
 
 // Country jobs page = list pre-filtered by country (PRD §5.4).
 export default async function CountryJobsPage({

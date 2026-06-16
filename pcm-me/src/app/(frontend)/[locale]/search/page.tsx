@@ -7,6 +7,13 @@ import { homeUrl, searchUrl } from '../../../../lib/routes'
 import { search, type SearchType } from '../../../../lib/search'
 import { Breadcrumbs } from '../../../../components/site/Breadcrumbs'
 import { Pagination } from '../../../../components/site/Pagination'
+import { simpleMetadata } from '../../../../lib/seoPages'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const l = locale as Locale
+  return simpleMetadata({ locale: l, title: t(l, 'search'), path: searchUrl(l) })
+}
 
 const typeLabel = (type: SearchType, l: Locale): string =>
   type === 'article' ? t(l, 'typeArticle') : type === 'vacancy' ? t(l, 'typeVacancy') : t(l, 'typeCompany')

@@ -6,6 +6,18 @@ import { t } from '../../../../../lib/i18n'
 import { homeUrl, categoryUrl } from '../../../../../lib/routes'
 import { getCategoryBySlug } from '../../../../../lib/content'
 import { CategoryArchive } from '../../../../../components/site/CategoryArchive'
+import { simpleMetadata } from '../../../../../lib/seoPages'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; category_slug: string }>
+}) {
+  const { locale, category_slug } = await params
+  const l = locale as Locale
+  const cat = (await getCategoryBySlug(l, category_slug)) as { name?: string } | null
+  return simpleMetadata({ locale: l, title: cat?.name || category_slug, path: categoryUrl(l, category_slug) })
+}
 
 // Category archive (PRD §3.1, §5).
 export default async function CategoryPage({

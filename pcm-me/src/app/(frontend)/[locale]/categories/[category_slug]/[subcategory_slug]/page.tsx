@@ -6,6 +6,22 @@ import { t } from '../../../../../../lib/i18n'
 import { homeUrl, categoryUrl, subCategoryUrl } from '../../../../../../lib/routes'
 import { getCategoryBySlug } from '../../../../../../lib/content'
 import { CategoryArchive } from '../../../../../../components/site/CategoryArchive'
+import { simpleMetadata } from '../../../../../../lib/seoPages'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; category_slug: string; subcategory_slug: string }>
+}) {
+  const { locale, category_slug, subcategory_slug } = await params
+  const l = locale as Locale
+  const sub = (await getCategoryBySlug(l, subcategory_slug)) as { name?: string } | null
+  return simpleMetadata({
+    locale: l,
+    title: sub?.name || subcategory_slug,
+    path: subCategoryUrl(l, category_slug, subcategory_slug),
+  })
+}
 
 // Subcategory archive (PRD §3.1, §5).
 export default async function SubCategoryPage({

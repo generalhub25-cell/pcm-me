@@ -15,6 +15,20 @@ import { Breadcrumbs } from '../../../../../../components/site/Breadcrumbs'
 import { Body } from '../../../../../../components/site/Body'
 import { SetLangAlternate } from '../../../../../../components/site/LangAlternate'
 import { ApplicationForm } from '../../../../../../components/forms/ApplicationForm'
+import { JsonLd } from '../../../../../../components/seo/JsonLd'
+import { jobPostingJsonLd } from '../../../../../../lib/jsonld'
+import { vacancyMetadata } from '../../../../../../lib/seoPages'
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ locale: string; country: string; slug: string }>
+}) {
+  const { locale, country, slug } = await params
+  const enumCountry = countryFromRouteSlug(country)
+  if (!enumCountry) return { title: 'PCM' }
+  return vacancyMetadata(locale as Locale, enumCountry, slug)
+}
 
 const fmtDate = (value: unknown, locale: Locale): string => {
   if (!value) return ''
@@ -85,8 +99,18 @@ export default async function VacancyDetailPage({
         ]}
       />
 
-      {/* JSON-LD slot (Session 06 attaches JobPosting) */}
-      <div data-jsonld-slot="JobPosting" hidden />
+      <JsonLd
+        data={jobPostingJsonLd({
+          title: doc.title || '',
+          description: doc.title || '',
+          datePosted: doc.postedAt,
+          validThrough: doc.expiresAt,
+          employer: doc.employer,
+          location: doc.location,
+          country: doc.country,
+          locale: l,
+        })}
+      />
 
       <h1 className="page-title">{doc.title}</h1>
       <div className="card__meta">

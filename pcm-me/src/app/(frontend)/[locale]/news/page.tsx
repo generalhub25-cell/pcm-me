@@ -4,6 +4,13 @@ import type { Locale } from '../../../../lib/enums'
 import { t } from '../../../../lib/i18n'
 import { newsIndexUrl, homeUrl } from '../../../../lib/routes'
 import { ArticleIndex } from '../../../../components/site/ArticleIndex'
+import { simpleMetadata } from '../../../../lib/seoPages'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const l = locale as Locale
+  return simpleMetadata({ locale: l, title: t(l, 'news'), path: newsIndexUrl(l) })
+}
 
 // News index — Article kind=news (PRD §3.1, §5.2).
 export default async function NewsPage({

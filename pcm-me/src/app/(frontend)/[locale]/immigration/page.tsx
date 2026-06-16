@@ -4,6 +4,13 @@ import type { Locale } from '../../../../lib/enums'
 import { t } from '../../../../lib/i18n'
 import { homeUrl } from '../../../../lib/routes'
 import { CategoryArchive } from '../../../../components/site/CategoryArchive'
+import { simpleMetadata } from '../../../../lib/seoPages'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const l = locale as Locale
+  return simpleMetadata({ locale: l, title: t(l, 'immigration'), path: `/${l}/immigration` })
+}
 
 // Immigration hub (PRD §3.1, §5) — lists its content (category 'immigration' if present).
 export default async function ImmigrationPage({

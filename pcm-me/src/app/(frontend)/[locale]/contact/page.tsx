@@ -5,6 +5,13 @@ import { t } from '../../../../lib/i18n'
 import { homeUrl } from '../../../../lib/routes'
 import { Breadcrumbs } from '../../../../components/site/Breadcrumbs'
 import { ContactForm } from '../../../../components/forms/ContactForm'
+import { simpleMetadata } from '../../../../lib/seoPages'
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params
+  const l = locale as Locale
+  return simpleMetadata({ locale: l, title: t(l, 'contact'), path: `/${l}/contact` })
+}
 
 /**
  * Contact (PRD §5.8): contact form (shares apply-form styling/validation,
