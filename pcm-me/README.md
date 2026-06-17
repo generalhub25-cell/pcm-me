@@ -63,6 +63,10 @@ Default results page size: 12 (OQ-18).
   host/ops configuration, documented here for the deploy runbook.
 - **OQ-16 brand tokens:** still placeholders in `src/styles/tokens.css`;
   swap real values when provided.
+- **OQ-16 default OG image:** `public/og-default.png` is a **placeholder**
+  (solid 1200×630) used as the final fallback in the OG/Twitter image chain
+  (`og_image` → `hero_image` → site default, `src/lib/seo.ts`). Replace it with
+  the final brand OG image when brand assets are provided.
 
 ## Migration & redirects (Session 07)
 

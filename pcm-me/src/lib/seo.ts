@@ -7,6 +7,10 @@ import { absoluteUrl } from './canonical'
 const SITE_NAME = 'PCM'
 const SUFFIX = ` | ${SITE_NAME}`
 
+// Site default OG image — placeholder (PRD §9.2 fallback chain end);
+// replaceable under OQ-16 brand assets (see README). Served from /public.
+const DEFAULT_OG_IMAGE = absoluteUrl('/og-default.png')
+
 /**
  * Per-page, per-locale metadata (PRD §9.2, §9.4). Builds <title> (with site
  * suffix), description, canonical, OG/Twitter, and hreflang alternates
@@ -22,7 +26,8 @@ export const buildMetadata = (args: {
   alternates?: { ar?: string; en?: string } // absolute language URLs
 }): Metadata => {
   const title = args.title.endsWith(SITE_NAME) ? args.title : `${args.title}${SUFFIX}`
-  const images = args.ogImageUrl ? [{ url: args.ogImageUrl }] : undefined
+  // og_image → hero_image (resolved by callers) → site default placeholder.
+  const images = [{ url: args.ogImageUrl || DEFAULT_OG_IMAGE }]
 
   const languages: Record<string, string> = {
     'x-default': absoluteUrl(`/${DEFAULT_LOCALE}`),
