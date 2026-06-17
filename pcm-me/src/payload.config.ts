@@ -5,7 +5,7 @@ import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
 import { fileURLToPath } from 'url'
-import sharp from 'sharp'
+import { createRequire } from 'module'
 
 import { Users } from './collections/Users'
 import { Images } from './collections/Images'
@@ -20,6 +20,20 @@ import { Authors } from './collections/Authors'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+// sharp powers Payload's image resizing. Its native binary (libvips) fails to
+// load on the Vercel runtime under Turbopack externalization, so skip it there
+// (image uploads store originals without resizing; next/image still optimizes
+// public images via Vercel). Loaded normally for local dev.
+const require = createRequire(import.meta.url)
+let sharp: unknown = undefined
+if (!process.env.VERCEL) {
+  try {
+    sharp = require('sharp')
+  } catch {
+    sharp = undefined
+  }
+}
 
 // Local dev uses SQLite (file: URL); Vercel/production uses Postgres
 // (postgres:// URL). Adapter chosen by DATABASE_URI scheme so local dev is
@@ -83,5 +97,5 @@ export default buildConfig({
         }),
       ]
     : [],
-  sharp,
+  sharp: sharp as never,
 })
