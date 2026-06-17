@@ -25,6 +25,21 @@ const catName = (cat: unknown): string =>
 const authorName = (a: unknown): string =>
   a && typeof a === 'object' ? String((a as { name?: string }).name || '') : ''
 
+// Plain-text excerpt from a Lexical rich-text value (for the vacancy card
+// summary). Returns '' when there is no description/body (omit gracefully).
+const lexicalToText = (node: unknown): string => {
+  if (!node || typeof node !== 'object') return ''
+  const n = node as { text?: string; children?: unknown[] }
+  if (typeof n.text === 'string') return n.text
+  if (Array.isArray(n.children)) return n.children.map(lexicalToText).join(' ')
+  return ''
+}
+const summarize = (rich: unknown, max = 140): string => {
+  if (!rich || typeof rich !== 'object') return ''
+  const text = lexicalToText((rich as { root?: unknown }).root).replace(/\s+/g, ' ').trim()
+  return text.length > max ? text.slice(0, max).trimEnd() + '…' : text
+}
+
 type ArticleDoc = {
   title?: string
   excerpt?: string
@@ -63,27 +78,32 @@ type VacancyDoc = {
   country?: string
   roleType?: string
   postedAt?: string
+  description?: unknown
 }
 
-export const VacancyCard: React.FC<{ doc: VacancyDoc; locale: Locale }> = ({ doc, locale }) => (
-  <article className="card">
-    <h3>
-      <Link href={vacancyUrl(locale, (doc.country as never) || 'general', doc.slug || '')}>
-        {doc.title}
-      </Link>
-    </h3>
-    <div className="card__meta">
-      {[
-        doc.employer || '',
-        doc.country ? countryLabel[doc.country]?.[locale] : '',
-        doc.roleType ? roleTypeLabel[doc.roleType]?.[locale] : '',
-        fmtDate(doc.postedAt, locale),
-      ]
-        .filter(Boolean)
-        .join(' · ')}
-    </div>
-  </article>
-)
+export const VacancyCard: React.FC<{ doc: VacancyDoc; locale: Locale }> = ({ doc, locale }) => {
+  const summary = summarize(doc.description)
+  return (
+    <article className="card">
+      <h3>
+        <Link href={vacancyUrl(locale, (doc.country as never) || 'general', doc.slug || '')}>
+          {doc.title}
+        </Link>
+      </h3>
+      <div className="card__meta">
+        {[
+          doc.employer || '',
+          doc.country ? countryLabel[doc.country]?.[locale] : '',
+          doc.roleType ? roleTypeLabel[doc.roleType]?.[locale] : '',
+          fmtDate(doc.postedAt, locale),
+        ]
+          .filter(Boolean)
+          .join(' · ')}
+      </div>
+      {summary && <p className="muted">{summary}</p>}
+    </article>
+  )
+}
 
 type CompanyDoc = { name?: string; slug?: string; headquarters?: string; logo?: unknown }
 
