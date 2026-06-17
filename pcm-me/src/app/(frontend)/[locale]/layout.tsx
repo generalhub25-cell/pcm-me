@@ -38,6 +38,10 @@ export default async function LocaleLayout({
 
   return (
     <html lang={l} dir={dirFor(l)} className={`${fontAr.variable} ${fontEn.variable}`}>
+      <head>
+        {/* Per-locale RSS feed (PRD §9 / OQ-9 default) */}
+        <link rel="alternate" type="application/rss+xml" title={`PCM (${l})`} href={`/${l}/feed`} />
+      </head>
       <body>
         <JsonLd data={organizationJsonLd()} />
         <LangAlternateProvider>
