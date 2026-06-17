@@ -46,8 +46,8 @@ const noStore = [
 const nextConfig = {
   turbopack: { root: dirname },
   poweredByHeader: false,
-  // Keep sharp (and Payload) as runtime externals so their native binaries
-  // (libvips) load from node_modules on the Vercel Linux runtime.
+  // Keep sharp as a runtime external so its native binary loads from
+  // node_modules (not bundled by Turbopack).
   serverExternalPackages: ['sharp'],
   images: {
     // Responsive derivatives in modern formats with fallback (PRD §10.3).

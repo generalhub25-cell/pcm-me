@@ -1,5 +1,3 @@
-import { sqliteAdapter } from '@payloadcms/db-sqlite'
-import { postgresAdapter } from '@payloadcms/db-postgres'
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
@@ -45,13 +43,16 @@ const databaseUri =
   process.env.DATABASE_URL ||
   'file:./pcm-me.db'
 const usePostgres = databaseUri.startsWith('postgres')
+// Dynamically import only the adapter in use so the other's native binding
+// never loads at runtime (e.g. @payloadcms/db-sqlite's libsql native module
+// crashed on Vercel). Dynamic import keeps this Turbopack-compatible.
 const db = usePostgres
-  ? postgresAdapter({
+  ? (await import('@payloadcms/db-postgres')).postgresAdapter({
       pool: { connectionString: databaseUri },
       idType: 'uuid',
       push: true,
     })
-  : sqliteAdapter({
+  : (await import('@payloadcms/db-sqlite')).sqliteAdapter({
       client: { url: databaseUri },
       idType: 'uuid',
       push: false,
