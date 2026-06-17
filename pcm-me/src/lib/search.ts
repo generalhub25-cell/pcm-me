@@ -86,7 +86,7 @@ export const search = async (
     const catIds = cats.docs.map((d) => String(d.id))
     const tagIds = tags.docs.map((d) => String(d.id))
 
-    const or: Where[] = [{ title: { like: q } }, { excerpt: { like: q } }]
+    const or: Where[] = [{ title: { like: q } }, { excerpt: { like: q } }, { body: { like: q } }]
     if (catIds.length) or.push({ category: { in: catIds } })
     if (tagIds.length) or.push({ tags: { in: tagIds } })
 
@@ -164,7 +164,7 @@ export const search = async (
         and: [
           { status: { equals: 'published' } },
           ...localeCond(opts.locale, includeAll),
-          { or: [{ name: { like: q } }] },
+          { or: [{ name: { like: q } }, { body: { like: q } }] },
         ],
       },
       sort: 'name',
