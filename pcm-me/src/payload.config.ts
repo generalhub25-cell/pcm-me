@@ -1,4 +1,6 @@
 import { sqliteAdapter } from '@payloadcms/db-sqlite'
+import { postgresAdapter } from '@payloadcms/db-postgres'
+import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -18,6 +20,25 @@ import { Authors } from './collections/Authors'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+// Local dev uses SQLite (file: URL); Vercel/production uses Postgres
+// (postgres:// URL). Adapter chosen by DATABASE_URI scheme so local dev is
+// unchanged. Postgres uses push (auto-sync schema on a fresh Vercel Postgres);
+// SQLite keeps its committed migrations.
+const databaseUri = process.env.DATABASE_URI || 'file:./pcm-me.db'
+const usePostgres = databaseUri.startsWith('postgres')
+const db = usePostgres
+  ? postgresAdapter({
+      pool: { connectionString: databaseUri },
+      idType: 'uuid',
+      push: true,
+    })
+  : sqliteAdapter({
+      client: { url: databaseUri },
+      idType: 'uuid',
+      push: false,
+      migrationDir: path.resolve(dirname, 'migrations'),
+    })
 
 export default buildConfig({
   admin: {
@@ -46,13 +67,17 @@ export default buildConfig({
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
-  db: sqliteAdapter({
-    client: {
-      url: process.env.DATABASE_URI || 'file:./pcm-me.db',
-    },
-    idType: 'uuid',
-    push: false,
-    migrationDir: path.resolve(dirname, 'migrations'),
-  }),
+  db,
+  // Uploads → Vercel Blob when its token is present (production); otherwise
+  // local disk (dev). Gated so local dev is unchanged.
+  plugins: process.env.BLOB_READ_WRITE_TOKEN
+    ? [
+        vercelBlobStorage({
+          enabled: true,
+          collections: { images: true, files: true },
+          token: process.env.BLOB_READ_WRITE_TOKEN,
+        }),
+      ]
+    : [],
   sharp,
 })

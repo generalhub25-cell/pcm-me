@@ -49,6 +49,8 @@ const nextConfig = {
   images: {
     // Responsive derivatives in modern formats with fallback (PRD §10.3).
     formats: ['image/avif', 'image/webp'],
+    // Allow Vercel Blob-hosted uploads to be optimized by next/image (prod).
+    remotePatterns: [{ protocol: 'https', hostname: '*.public.blob.vercel-storage.com' }],
   },
   async headers() {
     return [
