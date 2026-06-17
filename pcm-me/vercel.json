@@ -1,0 +1,4 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "DATABASE_URI=\"$POSTGRES_URL_NON_POOLING\" node --import tsx src/seed/run.ts && next build"
+}
