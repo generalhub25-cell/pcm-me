@@ -25,7 +25,11 @@ const dirname = path.dirname(filename)
 // (postgres:// URL). Adapter chosen by DATABASE_URI scheme so local dev is
 // unchanged. Postgres uses push (auto-sync schema on a fresh Vercel Postgres);
 // SQLite keeps its committed migrations.
-const databaseUri = process.env.DATABASE_URI || 'file:./pcm-me.db'
+const databaseUri =
+  process.env.DATABASE_URI ||
+  process.env.POSTGRES_URL ||
+  process.env.DATABASE_URL ||
+  'file:./pcm-me.db'
 const usePostgres = databaseUri.startsWith('postgres')
 const db = usePostgres
   ? postgresAdapter({
