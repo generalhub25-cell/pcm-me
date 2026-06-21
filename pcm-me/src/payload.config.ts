@@ -98,14 +98,16 @@ export default buildConfig({
   db,
   // Uploads → Vercel Blob when its token is present (production); otherwise
   // local disk (dev). Gated so local dev is unchanged.
-  plugins: process.env.BLOB_READ_WRITE_TOKEN
-    ? [
-        vercelBlobStorage({
-          enabled: true,
-          collections: { images: true, files: true },
-          token: process.env.BLOB_READ_WRITE_TOKEN,
-        }),
-      ]
-    : [],
+  // TEMP: Blob plugin disabled to isolate a Vercel runtime crash.
+  plugins:
+    readEnv('BLOB_READ_WRITE_TOKEN') && readEnv('ENABLE_BLOB')
+      ? [
+          vercelBlobStorage({
+            enabled: true,
+            collections: { images: true, files: true },
+            token: readEnv('BLOB_READ_WRITE_TOKEN'),
+          }),
+        ]
+      : [],
   sharp: sharp as never,
 })
