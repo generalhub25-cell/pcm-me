@@ -41,8 +41,11 @@ if (!process.env.VERCEL) {
 // time (dot-notation process.env.X gets baked into the bundle; on Vercel that
 // made the adapter resolve to SQLite at runtime even though POSTGRES_URL exists).
 const readEnv = (k: string): string | undefined => process.env[k]
+// Prefer the non-pooling (direct) URL: Payload/drizzle use prepared statements,
+// which Neon's pooled (pgbouncer transaction-pooling) endpoint does not support.
 const databaseUri =
   readEnv('DATABASE_URI') ||
+  readEnv('POSTGRES_URL_NON_POOLING') ||
   readEnv('POSTGRES_URL') ||
   readEnv('DATABASE_URL') ||
   'file:./pcm-me.db'
@@ -54,7 +57,9 @@ const db = usePostgres
   ? (await import('@payloadcms/db-postgres')).postgresAdapter({
       pool: { connectionString: databaseUri },
       idType: 'uuid',
-      push: true,
+      // Push (schema sync) only outside production; the build seed creates the
+      // schema. At runtime (production) use the existing schema.
+      push: readEnv('NODE_ENV') !== 'production',
     })
   : (await import('@payloadcms/db-sqlite')).sqliteAdapter({
       client: { url: databaseUri },
