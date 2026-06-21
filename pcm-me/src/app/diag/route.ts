@@ -56,6 +56,18 @@ export async function GET(req: Request) {
     out.dbConnect = fail(e)
   }
 
+  // 4) Full Payload init (the path pages use). ok/fail code only; no data.
+  try {
+    const [{ getPayload }, configMod] = await Promise.all([
+      import('payload'),
+      import('../../payload.config'),
+    ])
+    await getPayload({ config: configMod.default })
+    out.getPayloadInit = 'ok'
+  } catch (e) {
+    out.getPayloadInit = fail(e)
+  }
+
   return new Response(JSON.stringify(out, null, 2), {
     headers: { 'Content-Type': 'application/json', 'X-Robots-Tag': 'noindex' },
   })
