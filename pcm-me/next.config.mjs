@@ -46,9 +46,19 @@ const noStore = [
 const nextConfig = {
   turbopack: { root: dirname },
   poweredByHeader: false,
-  // Keep sharp as a runtime external so its native binary loads from
-  // node_modules (not bundled by Turbopack).
-  serverExternalPackages: ['sharp'],
+  // Load these from node_modules at runtime instead of bundling them. The
+  // bundled Payload DB adapter crashed natively on Vercel (exit 128) while the
+  // same code run from node_modules (build seed) worked. sharp likewise needs
+  // its native binary loaded externally.
+  serverExternalPackages: [
+    'sharp',
+    '@payloadcms/db-vercel-postgres',
+    '@payloadcms/db-postgres',
+    '@payloadcms/db-sqlite',
+    '@vercel/postgres',
+    'pg',
+    'drizzle-orm',
+  ],
   images: {
     // Responsive derivatives in modern formats with fallback (PRD §10.3).
     formats: ['image/avif', 'image/webp'],
