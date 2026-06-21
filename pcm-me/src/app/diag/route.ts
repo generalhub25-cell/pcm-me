@@ -11,6 +11,18 @@ const fail = (e: unknown): string => {
   return 'fail:' + String(err?.code || err?.name || 'error').slice(0, 24)
 }
 
+// Heavily redacted error description: strips URLs/connection strings, long
+// tokens, and @-addresses so no secret/URL/value can appear. For pinpointing
+// the init failure only.
+const redacted = (e: unknown): string => {
+  let m = String((e as { message?: string })?.message || '')
+  m = m
+    .replace(/[a-z]+:\/\/\S+/gi, '<url>')
+    .replace(/\b[A-Za-z0-9_-]{20,}\b/g, '<token>')
+    .replace(/\S+@\S+/g, '<redacted>')
+  return m.slice(0, 180)
+}
+
 export async function GET(req: Request) {
   // Gate: 404 unless the exact token is supplied. Not discoverable/usable without it.
   const key = new URL(req.url).searchParams.get('key')
@@ -34,6 +46,7 @@ export async function GET(req: Request) {
     out.sharpLoad = 'ok'
   } catch (e) {
     out.sharpLoad = fail(e)
+    out.sharpLoadHint = redacted(e)
   }
 
   // 2) Postgres adapter module import
@@ -66,6 +79,7 @@ export async function GET(req: Request) {
     out.getPayloadInit = 'ok'
   } catch (e) {
     out.getPayloadInit = fail(e)
+    out.getPayloadInitHint = redacted(e)
   }
 
   return new Response(JSON.stringify(out, null, 2), {
