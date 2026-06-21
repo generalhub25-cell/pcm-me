@@ -37,10 +37,14 @@ if (!process.env.VERCEL) {
 // (postgres:// URL). Adapter chosen by DATABASE_URI scheme so local dev is
 // unchanged. Postgres uses push (auto-sync schema on a fresh Vercel Postgres);
 // SQLite keeps its committed migrations.
+// Read via a dynamic accessor so Next/Turbopack does NOT inline these at build
+// time (dot-notation process.env.X gets baked into the bundle; on Vercel that
+// made the adapter resolve to SQLite at runtime even though POSTGRES_URL exists).
+const readEnv = (k: string): string | undefined => process.env[k]
 const databaseUri =
-  process.env.DATABASE_URI ||
-  process.env.POSTGRES_URL ||
-  process.env.DATABASE_URL ||
+  readEnv('DATABASE_URI') ||
+  readEnv('POSTGRES_URL') ||
+  readEnv('DATABASE_URL') ||
   'file:./pcm-me.db'
 const usePostgres = databaseUri.startsWith('postgres')
 // Dynamically import only the adapter in use so the other's native binding
