@@ -41,26 +41,21 @@ if (!process.env.VERCEL) {
 // time (dot-notation process.env.X gets baked into the bundle; on Vercel that
 // made the adapter resolve to SQLite at runtime even though POSTGRES_URL exists).
 const readEnv = (k: string): string | undefined => process.env[k]
-// Runtime prefers the pooled POSTGRES_URL (the Neon serverless driver handles
-// pgbouncer correctly). The build seed overrides DATABASE_URI with the direct
-// (non-pooling) URL for schema DDL.
+// Postgres on a persistent Node host (container). Local dev stays on SQLite.
 const databaseUri =
   readEnv('DATABASE_URI') ||
-  readEnv('POSTGRES_URL') ||
-  readEnv('POSTGRES_URL_NON_POOLING') ||
   readEnv('DATABASE_URL') ||
+  readEnv('POSTGRES_URL') ||
   'file:./pcm-me.db'
 const usePostgres = databaseUri.startsWith('postgres')
 // Dynamically import only the adapter in use so the other's native binding
-// never loads at runtime (e.g. @payloadcms/db-sqlite's libsql native module
-// crashed on Vercel). On Vercel use the serverless-tuned vercel-postgres
-// adapter (Neon serverless driver) instead of node-postgres.
+// never loads when unused.
 const db = usePostgres
-  ? (await import('@payloadcms/db-vercel-postgres')).vercelPostgresAdapter({
+  ? (await import('@payloadcms/db-postgres')).postgresAdapter({
       pool: { connectionString: databaseUri },
       idType: 'uuid',
-      // Push (schema sync) only outside production; the build seed creates the
-      // schema. At runtime (production) use the existing schema.
+      // Push (schema sync) only outside production; the build/release step
+      // creates the schema. At runtime use the existing schema.
       push: readEnv('NODE_ENV') !== 'production',
     })
   : (await import('@payloadcms/db-sqlite')).sqliteAdapter({
