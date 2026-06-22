@@ -1,0 +1,33 @@
+services:
+  - type: web
+    name: pcm-me
+    runtime: node
+    plan: free
+    rootDir: pcm-me
+    # Install devDeps (tsx/typescript), create schema + seed (push runs only
+    # outside production), then build.
+    buildCommand: "npm install --include=dev && NODE_ENV=development node --import tsx src/seed/run.ts && npm run build"
+    startCommand: "npm start"
+    autoDeployTrigger: off
+    envVars:
+      - key: NODE_VERSION
+        value: "22"
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
+      # Neon Postgres — paste the DIRECT (non-pooling) connection string in the
+      # Render dashboard. Persistent runtime needs no pgbouncer.
+      - key: DATABASE_URL
+        sync: false
+      # Render generates a strong secret automatically.
+      - key: PAYLOAD_SECRET
+        generateValue: true
+      # Set to the live Render URL after the service is created (optional;
+      # affects canonical/OG/sitemap absolute URLs only).
+      - key: SITE_URL
+        sync: false
+      - key: APPLICATION_DELIVERY
+        value: both
+      - key: APPLICATIONS_RECIPIENT
+        value: applications@pcm.me
+      - key: CONTACT_RECIPIENT
+        value: contact@pcm.me
