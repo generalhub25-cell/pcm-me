@@ -8,6 +8,10 @@ next-env.d.ts
 *.db-wal
 *.db.bak-*
 /media
+# Payload Images-collection upload dir (default staticDir = ./images).
+# Local/staging uploaded + migration-downloaded media — never commit (use cloud
+# storage in production). The tracked images/verify.png stays tracked.
+/images/
 build
 dist
 .DS_Store
