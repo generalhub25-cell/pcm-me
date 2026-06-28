@@ -68,6 +68,21 @@ const db = usePostgres
 export default buildConfig({
   admin: {
     user: Users.slug,
+    // Force a fixed admin theme. The default ('all') resolves the theme on the
+    // client and rewrites <html data-theme> after SSR, causing a hydration
+    // mismatch on the admin shell (body transition / payload CSS layers). A
+    // fixed theme renders identically on server and client.
+    theme: 'light',
+    // Payload applies suppressHydrationWarning to the admin <html> from this
+    // flag (default false). The admin shell sets data-theme/dir/lang from
+    // request state and a browser extension may touch <html>/<body>; enabling
+    // this prevents the recoverable hydration overlay during local review.
+    suppressHydrationWarning: true,
+    // Use the built-in account icon instead of the default Gravatar avatar.
+    // Gravatar loads from gravatar.com, which the site CSP (img-src 'self')
+    // blocks → broken image in the top-right account button. 'default' renders
+    // a local SVG, no external request.
+    avatar: 'default',
     importMap: {
       baseDir: path.resolve(dirname),
     },

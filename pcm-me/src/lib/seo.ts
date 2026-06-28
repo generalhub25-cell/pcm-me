@@ -25,7 +25,12 @@ export const buildMetadata = (args: {
   ogImageUrl?: string // absolute
   alternates?: { ar?: string; en?: string } // absolute language URLs
 }): Metadata => {
-  const title = args.title.endsWith(SITE_NAME) ? args.title : `${args.title}${SUFFIX}`
+  // Guard against an undefined/empty title (e.g. a non-ar/en value reaching a
+  // [locale] route makes the i18n lookup return undefined). A thrown
+  // generateMetadata crashes the Next render worker, so always fall back to the
+  // site name rather than throw.
+  const base = args.title || SITE_NAME
+  const title = base.endsWith(SITE_NAME) ? base : `${base}${SUFFIX}`
   // og_image → hero_image (resolved by callers) → site default placeholder.
   const images = [{ url: args.ogImageUrl || DEFAULT_OG_IMAGE }]
 
