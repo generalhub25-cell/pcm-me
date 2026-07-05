@@ -1,4 +1,6 @@
 import { vercelBlobStorage } from '@payloadcms/storage-vercel-blob'
+import { s3Storage } from '@payloadcms/storage-s3'
+import { resendAdapter } from '@payloadcms/email-resend'
 import { lexicalEditor } from '@payloadcms/richtext-lexical'
 import path from 'path'
 import { buildConfig } from 'payload'
@@ -104,22 +106,53 @@ export default buildConfig({
   ],
   editor: lexicalEditor(),
   secret: process.env.PAYLOAD_SECRET || '',
+  // Transactional email (application/contact forms) via Resend when its API key
+  // is set; otherwise Payload logs emails to the console (dev default).
+  email: readEnv('RESEND_API_KEY')
+    ? resendAdapter({
+        defaultFromName: 'PCM',
+        defaultFromAddress: readEnv('EMAIL_FROM') || 'onboarding@resend.dev',
+        apiKey: readEnv('RESEND_API_KEY') as string,
+      })
+    : undefined,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   db,
-  // Uploads → Vercel Blob when its token is present (production); otherwise
-  // local disk (dev). Gated so local dev is unchanged.
-  // TEMP: Blob plugin disabled to isolate a Vercel runtime crash.
+  // Uploads storage, chosen by which env vars are present:
+  //  1) Supabase Storage (S3-compatible) when S3_* are set — production default
+  //     (files persist across restarts; served back through Payload so the
+  //     site CSP img-src 'self' still applies).
+  //  2) Vercel Blob when its token + ENABLE_BLOB are set.
+  //  3) Otherwise local disk (dev).
   plugins:
-    readEnv('BLOB_READ_WRITE_TOKEN') && readEnv('ENABLE_BLOB')
+    readEnv('S3_BUCKET') &&
+    readEnv('S3_ENDPOINT') &&
+    readEnv('S3_ACCESS_KEY_ID') &&
+    readEnv('S3_SECRET_ACCESS_KEY')
       ? [
-          vercelBlobStorage({
-            enabled: true,
+          s3Storage({
             collections: { images: true, files: true },
-            token: readEnv('BLOB_READ_WRITE_TOKEN'),
+            bucket: readEnv('S3_BUCKET') as string,
+            config: {
+              endpoint: readEnv('S3_ENDPOINT'),
+              region: readEnv('S3_REGION') || 'us-east-1',
+              forcePathStyle: true, // required for Supabase / S3-compatible hosts
+              credentials: {
+                accessKeyId: readEnv('S3_ACCESS_KEY_ID') as string,
+                secretAccessKey: readEnv('S3_SECRET_ACCESS_KEY') as string,
+              },
+            },
           }),
         ]
-      : [],
+      : readEnv('BLOB_READ_WRITE_TOKEN') && readEnv('ENABLE_BLOB')
+        ? [
+            vercelBlobStorage({
+              enabled: true,
+              collections: { images: true, files: true },
+              token: readEnv('BLOB_READ_WRITE_TOKEN'),
+            }),
+          ]
+        : [],
   sharp: sharp as never,
 })

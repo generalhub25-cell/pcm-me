@@ -31,3 +31,25 @@ services:
         value: applications@pcm.me
       - key: CONTACT_RECIPIENT
         value: contact@pcm.me
+      # Real admin login (replaces the insecure default). Set both.
+      - key: SEED_ADMIN_EMAIL
+        sync: false
+      - key: SEED_ADMIN_PASSWORD
+        sync: false
+      # Resend transactional email (Step 3). EMAIL_FROM must be a Resend-verified
+      # address (or onboarding@resend.dev for testing).
+      - key: RESEND_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      # Supabase Storage (S3-compatible) for uploads (Step 2).
+      - key: S3_BUCKET
+        sync: false
+      - key: S3_ENDPOINT
+        sync: false
+      - key: S3_REGION
+        sync: false
+      - key: S3_ACCESS_KEY_ID
+        sync: false
+      - key: S3_SECRET_ACCESS_KEY
+        sync: false
