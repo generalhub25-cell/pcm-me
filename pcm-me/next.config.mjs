@@ -46,6 +46,10 @@ const noStore = [
 const nextConfig = {
   turbopack: { root: dirname },
   poweredByHeader: false,
+  // Don't auto-redirect trailing slashes, so old pcm.me URLs like
+  // `/some-slug/` are preserved exactly (the middleware rewrites them to the
+  // legacy resolver instead of Next stripping the slash with a 308).
+  skipTrailingSlashRedirect: true,
   // Load these from node_modules at runtime instead of bundling them. The
   // bundled Payload DB adapter crashed natively on Vercel (exit 128) while the
   // same code run from node_modules (build seed) worked. sharp likewise needs
