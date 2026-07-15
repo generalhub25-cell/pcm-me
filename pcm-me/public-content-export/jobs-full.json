@@ -1,0 +1,28 @@
+[
+  {
+    "title": "Medical Representative — Cairo",
+    "employer": null,
+    "country": "egypt",
+    "roleType": "medical_representative",
+    "location": null,
+    "slug": "medical-representative-cairo",
+    "legacyUrl": null,
+    "locale": "en",
+    "status": "published",
+    "date": "2026-06-17T11:45:27.246Z",
+    "expiresAt": null
+  },
+  {
+    "title": "مندوب طبي — القاهرة",
+    "employer": null,
+    "country": "egypt",
+    "roleType": "medical_representative",
+    "location": null,
+    "slug": "mndwb-tby-alqahrh",
+    "legacyUrl": null,
+    "locale": "ar",
+    "status": "published",
+    "date": "2026-06-17T11:45:27.233Z",
+    "expiresAt": null
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "name": "Sample Company",
+    "slug": "sample-company",
+    "legacyUrl": null,
+    "locale": "en",
+    "status": "published",
+    "externalUrl": null,
+    "founded": null,
+    "headquarters": null,
+    "date": "2026-06-17T11:45:27.224Z",
+    "logo": null
+  },
+  {
+    "name": "شركة تجريبية",
+    "slug": "shrkh-tjrybyh",
+    "legacyUrl": null,
+    "locale": "ar",
+    "status": "published",
+    "externalUrl": null,
+    "founded": null,
+    "headquarters": null,
+    "date": "2026-06-17T11:45:27.213Z",
+    "logo": null
+  }
+]

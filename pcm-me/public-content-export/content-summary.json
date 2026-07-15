@@ -1,0 +1,105 @@
+{
+  "exportType": "sanitized-public-content",
+  "source": "local/staging Payload database; sanitized public export only",
+  "generatedAt": "2026-07-15T14:05:47.832Z",
+  "counts": {
+    "articles": 5081,
+    "jobs": 2,
+    "companies": 2,
+    "categories": 88,
+    "tags": 1299,
+    "authors": 3,
+    "media": 3933
+  },
+  "files": {
+    "articles": "articles-full.json",
+    "jobs": "jobs-full.json",
+    "companies": "companies-full.json",
+    "media": "media-manifest.json"
+  },
+  "includedCollections": [
+    "published articles",
+    "published vacancies",
+    "published companies",
+    "published categories",
+    "published tags",
+    "published authors by display name only",
+    "image metadata/public or local paths only"
+  ],
+  "excludedCollections": [
+    "users",
+    "users_sessions",
+    "applications",
+    "contact submissions",
+    "files/CVs",
+    "payload_preferences",
+    "payload_locked_documents",
+    "private settings"
+  ],
+  "fieldPolicy": {
+    "articles": [
+      "title",
+      "slug",
+      "legacyUrl",
+      "locale",
+      "status",
+      "date",
+      "excerpt",
+      "category/tag names and slugs",
+      "author display name only",
+      "featured image filename/url",
+      "bodyTextLength only"
+    ],
+    "jobs": [
+      "title",
+      "employer",
+      "country",
+      "roleType",
+      "location",
+      "slug",
+      "legacyUrl",
+      "locale",
+      "status",
+      "date",
+      "expiresAt"
+    ],
+    "companies": [
+      "name",
+      "slug",
+      "legacyUrl",
+      "locale",
+      "status",
+      "externalUrl",
+      "founded",
+      "headquarters",
+      "logo filename/url"
+    ],
+    "media": [
+      "filename",
+      "url",
+      "localPath",
+      "thumbnailUrl",
+      "alt text",
+      "caption",
+      "mimeType",
+      "size",
+      "width",
+      "height"
+    ],
+    "explicitlyExcludedFields": [
+      "raw body content",
+      "job apply email",
+      "job apply WhatsApp",
+      "user/admin records",
+      "password hashes",
+      "sessions",
+      "tokens",
+      "API keys",
+      "applications",
+      "contact submissions",
+      "cookies",
+      "raw uploaded files",
+      "raw database files"
+    ]
+  }
+}
